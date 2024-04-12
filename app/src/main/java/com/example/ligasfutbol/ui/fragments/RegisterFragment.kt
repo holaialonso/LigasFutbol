@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.ligasfutbol.R
 import com.example.ligasfutbol.databinding.LoginFragmentBinding
 import com.example.ligasfutbol.databinding.RegisterFragmentBinding
+import com.example.ligasfutbol.ui.dialog.RegisterDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -71,7 +72,9 @@ class RegisterFragment  : Fragment (){
                     if(it.isSuccessful){ //la petición se ha resuelto de forma satistactoria
 
                         makeBBDDUser(auth.currentUser!!.uid, name, surname)
-                        showMessage("El usuario se ha creado")
+
+                        val dialogo : RegisterDialog = RegisterDialog().newInstance(name)
+                            dialogo.show(parentFragmentManager, null)
 
                     }
                     else{ //error

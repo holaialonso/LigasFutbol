@@ -6,7 +6,17 @@
         <item name="android:padding">10dp</item>
         <item name="android:textSize">18dp</item>
         <item name="android:layout_marginBottom">10dp</item>
-        <item name="android:text">Mi cuenta</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- título del cuadro de diálogo -->
+    <style name="labelTitleDialog">
+        <item name="android:gravity">center</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
@@ -25,6 +35,8 @@
         <item name="android:background">@drawable/input_border</item>
         <item name="android:layout_height">35dp</item>
         <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:paddingLeft">10dp</item>
     </style>
 
     <!-- botones -->
@@ -40,6 +52,19 @@
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
+    <!-- botones de los cuadros de diálogo -->
+    <style name="buttonDialog">
+        <item name="android:fontFamily">@font/open_sans</item>
+        <item name="android:background">@drawable/button</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">25dp</item>
+    </style>
+
     <!-- botones que tienen la misma apariencia que si fueran un link -->
     <style name="fakeLink">
         <item name="android:background">@android:color/transparent</item>
@@ -48,5 +73,14 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
+
+    <!-- estilo del texto del cuadro de diálogo -->
+    <style name="dialogText">
+        <item name="android:fontFamily">@font/open_sans</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginBottom">16dp</item>
+    </style>
+
 
 </resources>

@@ -27,6 +27,7 @@
         <TextView
             style="@style/labelTitle"
             android:id="@+id/labelTitle"
+            android:text="Mi cuenta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
