@@ -10,6 +10,8 @@
         android:layout_height="450dp"
         android:orientation="vertical"
         android:gravity="center_vertical"
+        android:paddingRight="25dp"
+        android:paddingLeft="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,8 +66,8 @@
 
         <androidx.appcompat.widget.AppCompatButton
             style="@style/fakeLink"
-            android:id="@+id/button4"
-            android:layout_marginTop="10dp"
+            android:id="@+id/buttonRegisterLogin"
+            android:layout_marginTop="5dp"
             android:text="¿Eres nuevo? Regístrate" />
 
 

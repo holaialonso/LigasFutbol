@@ -10,6 +10,8 @@
         android:layout_height="480dp"
         android:orientation="vertical"
         android:gravity="center_vertical"
+        android:paddingRight="25dp"
+        android:paddingLeft="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -76,7 +78,7 @@
             android:id="@+id/inputPasswordRegister"
             android:layout_width="match_parent"
             android:ems="10"
-            android:inputType="numberPassword" />
+            android:inputType="textPassword" />
 
         <androidx.appcompat.widget.AppCompatButton
             style="@style/button"

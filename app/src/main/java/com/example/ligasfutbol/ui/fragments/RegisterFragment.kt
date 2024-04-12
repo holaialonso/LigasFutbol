@@ -6,12 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.ligasfutbol.R
 import com.example.ligasfutbol.databinding.LoginFragmentBinding
 import com.example.ligasfutbol.databinding.RegisterFragmentBinding
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class RegisterFragment  : Fragment (){
 
     private lateinit var binding: RegisterFragmentBinding
+    private lateinit var auth : FirebaseAuth //servicio de autenticación
+    private lateinit var database : FirebaseDatabase //servicio de base de datos
 
     //Método para pegar
     override fun onAttach (context: Context){
@@ -29,21 +36,70 @@ class RegisterFragment  : Fragment (){
 
         super.onViewCreated(view, savedInstanceState)
 
-        //Acción del botón cuando se hace login
+        //Inicializo la autenticación y la base de datos
+        auth=FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance("https://ial-ligas24-default-rtdb.europe-west1.firebasedatabase.app/")
 
-        /*binding.botonLogin.setOnClickListener{
-
-            //Lo que quiero comunicar -> parámetros
-            var bundle = Bundle()
-            bundle.putString("correo", binding.editCorreo.text.toString())
-
-            //lógica del botón
-            findNavController().navigate(R.id.action_loginFragment_to_mainFragment, bundle) //-> cuando se ha hecho toda la lógica -> me voy al otro fragment
-        }*/
+        //Botón de registro
+        binding.buttonRegister.setOnClickListener {
+            makeRegisterUser()
+        }
     }
 
     //Método para despegar el fragment
     override fun onDetach(){
         super.onDetach();
     }
+
+
+    //Métodos del frament
+        //Método para registrar a un usuario
+        private fun makeRegisterUser(){
+
+            //Obtengo todos los valores del formulario
+            var name : String = binding.inputName.text.toString()
+            var surname : String = binding.inputSurname.text.toString()
+            var email : String = binding.inputEmailRegister.text.toString()
+            var password : String = binding.inputPasswordRegister.text.toString()
+
+            //Todos los campos tienen que estar rellenados
+            if((name.length>0)&&(surname.length>0)&&(email.length>0)&&(password.length>0)){
+
+                //Registro el usuario
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener{
+
+                    if(it.isSuccessful){ //la petición se ha resuelto de forma satistactoria
+
+                        makeBBDDUser(auth.currentUser!!.uid, name, surname)
+                        showMessage("El usuario se ha creado")
+
+                    }
+                    else{ //error
+                       showMessage("Ha ocurrido un error al crear el usuario.")
+                    }
+                }
+            }
+            else {
+               showMessage("¡Cuidado! Debes rellenar todos los campos del formulario.")
+            }
+        }
+
+
+        //Método para guardar el usuario en la base de datos
+        private fun makeBBDDUser(id : String, name : String, surname : String){
+
+            //1. Obtengo el nodo
+                val referencia = database.getReference("users").child(id)
+
+            //2. Inserto los valores del nodo
+                referencia.child("name").setValue(name)
+                referencia.child("surname").setValue(surname)
+
+        }
+
+
+        //Método para imprimir en pantalla mensajes en un snackbar
+        private fun showMessage(message : String){
+            Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+        }
 }
