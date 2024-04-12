@@ -15,46 +15,37 @@
         tools:layout_editor_absoluteY="1dp">
 
         <TextView
-            android:id="@+id/labelRegisterDialog_Title"
+            android:id="@+id/labelMessageDialog_Title"
             style="@style/labelTitleDialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="Usuario registrado"
+            android:text="Title"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/labelRegisterDialog_Text"
+            android:id="@+id/labelMessageDialog_Text"
             style="@style/dialogText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="20dp"
-            android:text="Tu usuario se ha creado correctamente.\n¿Qué quieres hacer ahora?"
-            app:layout_constraintTop_toBottomOf="@+id/labelRegisterDialog_Title" />
+            android:text="Descripción"
+            app:layout_constraintTop_toBottomOf="@+id/labelMessageDialog_Title" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/buttonRegisterExit"
+            android:id="@+id/buttonMessageDialog_OK"
             style="@style/buttonDialog"
             android:layout_width="wrap_content"
-            android:paddingRight="20dp"
             android:paddingLeft="20dp"
-            android:text="Salir"
+            android:paddingRight="20dp"
+            android:text="Aceptar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/labelRegisterDialog_Text"
-            app:layout_constraintVertical_bias="0.2"/>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/buttonRegisterLogin"
-            style="@style/buttonDialog"
-            android:layout_width="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:text="Iniciar sesión"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/labelRegisterDialog_Text"
+            app:layout_constraintTop_toBottomOf="@+id/labelMessageDialog_Text"
             app:layout_constraintVertical_bias="0.2" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

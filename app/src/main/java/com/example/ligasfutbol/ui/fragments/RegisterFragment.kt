@@ -10,7 +10,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.ligasfutbol.R
 import com.example.ligasfutbol.databinding.LoginFragmentBinding
 import com.example.ligasfutbol.databinding.RegisterFragmentBinding
+import com.example.ligasfutbol.ui.dialog.MessageDialog
 import com.example.ligasfutbol.ui.dialog.RegisterDialog
+import com.example.ligasfutbol.ui.helpers.Helpers
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -20,6 +22,8 @@ class RegisterFragment  : Fragment (){
     private lateinit var binding: RegisterFragmentBinding
     private lateinit var auth : FirebaseAuth //servicio de autenticación
     private lateinit var database : FirebaseDatabase //servicio de base de datos
+    private lateinit var title : String //para los mensajes de error
+    private lateinit var text : String //para los mensajes de error
 
     //Método para pegar
     override fun onAttach (context: Context){
@@ -60,30 +64,30 @@ class RegisterFragment  : Fragment (){
             //Obtengo todos los valores del formulario
             var name : String = binding.inputName.text.toString()
             var surname : String = binding.inputSurname.text.toString()
-            var email : String = binding.inputEmailRegister.text.toString()
-            var password : String = binding.inputPasswordRegister.text.toString()
+            var email : String = checkEmail(binding.inputEmailRegister.text.toString())
+            var password : String = checkPassword(binding.inputPasswordRegister.text.toString())
 
             //Todos los campos tienen que estar rellenados
-            if((name.length>0)&&(surname.length>0)&&(email.length>0)&&(password.length>0)){
+            if((!name.isNullOrEmpty())&&(!surname.isNullOrEmpty())&&(!email.isNullOrEmpty())&&(!password.isNullOrEmpty())){
 
                 //Registro el usuario
-                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener{
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
 
-                    if(it.isSuccessful){ //la petición se ha resuelto de forma satistactoria
+                    if (it.isSuccessful) { //la petición se ha resuelto de forma satistactoria
 
                         makeBBDDUser(auth.currentUser!!.uid, name, surname)
 
-                        val dialogo : RegisterDialog = RegisterDialog().newInstance(name)
-                            dialogo.show(parentFragmentManager, null)
+                        //Mensaje de confirmación
+                        val dialogo: RegisterDialog = RegisterDialog().newInstance(name, email, password)
+                           dialogo.show(parentFragmentManager, null)
 
-                    }
-                    else{ //error
-                       showMessage("Ha ocurrido un error al crear el usuario.")
+                    } else { //error
+                       Helpers.showMessageDialog("Error", "Ha ocurrido un error inesperado al intentar crear el usuario.\nInténtalo de nuevo.", parentFragmentManager)
                     }
                 }
             }
             else {
-               showMessage("¡Cuidado! Debes rellenar todos los campos del formulario.")
+               Helpers.showMessageDialog("Error", "¡Cuidado debes rellenar todos los campos del formulario", parentFragmentManager)
             }
         }
 
@@ -101,8 +105,40 @@ class RegisterFragment  : Fragment (){
         }
 
 
-        //Método para imprimir en pantalla mensajes en un snackbar
-        private fun showMessage(message : String){
-            Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+        //Método para comprobar el email
+        private fun checkEmail(email : String) : String{
+
+            var aux = email
+
+            if(!Helpers.isValidEmail(aux)){
+                aux=""
+
+                //Mensaje de error
+                title = "Error"
+                text = "El email que has introducido no es correcto.\nRevisa que cumple con el patrón: usuario@servidor.com."
+                Helpers.showMessageDialog(title, text, parentFragmentManager)
+
+            }
+
+            return aux
         }
+
+        //Método para comprobar la contraseña
+        private fun checkPassword(password : String) : String{
+            var aux = password
+
+            if(!Helpers.isValidPassword(password)){
+                aux=""
+
+                //Mensaje de error
+                title="Error"
+                text="La contraseña debe ser alfanumérica y tener, al menos, 6 caracteres."
+                Helpers.showMessageDialog(title, text, parentFragmentManager)
+            }
+
+            return aux
+        }
+
+
+
 }
