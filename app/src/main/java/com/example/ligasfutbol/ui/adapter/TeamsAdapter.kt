@@ -6,14 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ligasfutbol.R
-import com.example.ligasfutbol.ui.model.League
 import com.example.ligasfutbol.ui.model.Team
 import com.bumptech.glide.Glide
-import com.example.ligasfutbol.ui.helpers.GrayscaleTransformation
+import com.google.firebase.database.FirebaseDatabase
 
 
 class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto : Context, private val activity : String): RecyclerView.Adapter<TeamsAdapter.MyHolder>() {
@@ -22,19 +20,22 @@ class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto 
     private lateinit var listener: TeamsAdapter.onRecyclerTeamsListener
     private lateinit var allTeams : ArrayList<Team>
 
+
     //Clase que pinta los valores de la lista
     class MyHolder(item: View) : RecyclerView.ViewHolder(item) {
 
         // Elementos de la liga
         var name: TextView
         var image : ImageView
-        var button : ImageButton
+        var buttonFav : ImageButton
+        var buttonNoFav : ImageButton
 
 
         init {
             name = item.findViewById(R.id.labelNameTeam)
             image = item.findViewById(R.id.imgTeam)
-            button = item.findViewById(R.id.buttonFavoriteTeam)
+            buttonFav = item.findViewById(R.id.buttonFavoriteTeam)
+            buttonNoFav = item.findViewById(R.id.buttonDefavoriteTeam)
         }
 
     }
@@ -72,9 +73,30 @@ class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto 
                 Glide.with(contexto).load(team.img).into(holder.image)
             }
 
+            //Cambio los botones de las estrellas dependiendo de si el usuario tiene favoritos o no
+            if(!team.favorite){
+                holder.buttonFav.visibility = View.VISIBLE
+                holder.buttonNoFav.visibility = View.GONE
+            }
+            else{
+                holder.buttonFav.visibility = View.GONE
+                holder.buttonNoFav.visibility = View.VISIBLE
+            }
 
             //Pulsaciones de los botones
+            //Botón favorito
+                holder.buttonFav?.setOnClickListener() {
+                    listener.onTeamFavorite(team)
+                    team.favorite=true
+                    updateList(team, position)
+                }
 
+            //Botón para eliminar el favorito
+                holder.buttonNoFav?.setOnClickListener(){
+                    listener.onTeamNoFavorite(team)
+                    team.favorite=false
+                    updateList(team, position)
+                }
 
         }
 
@@ -88,11 +110,20 @@ class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto 
 
         }
 
+        //Método para actualizar un elemento del recycled
+        fun updateList(element : Team, position: Int){
+            println("dentro de update list")
+            teams[position]=element
+            allTeams=teams
+            notifyItemChanged(position)
+        }
+
     //COMUNICACIÓN ADAPTER -> ACTIVITY/FRAGMENT
         //Interfaz para la comunicación entre el adaptador y la activity
         interface onRecyclerTeamsListener {
 
+            fun onTeamFavorite(team : Team)
 
-
+            fun onTeamNoFavorite(team : Team)
         }
 }

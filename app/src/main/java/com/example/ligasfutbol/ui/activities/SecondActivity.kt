@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.example.ligasfutbol.R
 import com.example.ligasfutbol.databinding.ActivitySecondBinding
 import com.example.ligasfutbol.ui.adapter.LeagueAdapter
 import com.example.ligasfutbol.ui.adapter.TeamsAdapter
 import com.example.ligasfutbol.ui.fragments.HomeFragment
+import com.example.ligasfutbol.ui.fragments.TeamsFragment
 import com.example.ligasfutbol.ui.model.League
+import com.example.ligasfutbol.ui.model.Team
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,14 +24,15 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
 
     // private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivitySecondBinding
-    private lateinit var database : FirebaseDatabase //servicio de base de datos
     private lateinit var idUser : String
+    private lateinit var database : FirebaseDatabase //servicio de base de datos
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //Inicializo la base de datos
         database = FirebaseDatabase.getInstance("https://ial-ligas24-default-rtdb.europe-west1.firebasedatabase.app/")
+
 
         //Binding
         binding = ActivitySecondBinding.inflate(layoutInflater)
@@ -99,26 +103,44 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
     }
 
     //Métodos de la interfaz
-    override fun onLeagueSelected(league: League) {
+        //Método para ir de la home -> al fragment de equipos
+        override fun onLeagueSelected(league: League) {
 
-        // Obtén el FragmentManager
-        val fragmentManager = supportFragmentManager
+            // Obtengo el fragment actual
+            val fragmentManager = supportFragmentManager
+            val fragment = fragmentManager.findFragmentById(R.id.nav_host_fragment_content_second)
 
-    // Encuentra el fragmento actual
-        val fragment = fragmentManager.findFragmentById(R.id.nav_host_fragment_content_second)
-        println(fragment)
-    // Verifica si el fragmento encontrado no es nulo
-        if (fragment != null) {
-            println("no es nulo")
+            //Cambio el fragmen al de equipos
+            if (fragment != null) {
+                println("no es nulo")
 
-            var bundle = Bundle()
-            bundle.putString("nameLeague", league.name)
+                var bundle = Bundle()
+                bundle.putString("nameLeague", league.name)
+                bundle.putString("idUser", idUser)
 
-            fragment.findNavController().navigate(R.id.action_homeFragment_to_teamsFragment, bundle)
-        } else {
-            // El fragmento no está presente en la actividad actual
+                fragment.findNavController().navigate(R.id.action_homeFragment_to_teamsFragment, bundle)
+            }
+
         }
 
 
-    }
+        //Método para guardar el equipo como favorito del usuario
+        override fun onTeamFavorite(team: Team) {
+
+            //Guardo la parte relativa a la base de datos
+            val referencia = database.getReference("users").child(idUser).child("favorite").child(team.id.toString()) //obtengo el nodo
+            referencia.child("name").setValue(team.name)
+            referencia.child("image").setValue(team.img)
+
+        }
+
+        //Método para eliminar un equipo favorito del usuario
+        override fun onTeamNoFavorite(team: Team) {
+
+            //Guardo la parte relativa a la base de datos
+            val referencia = database.getReference("users").child(idUser).child("favorite").child(team.id.toString()) //obtengo el nodo
+            referencia.child("name").setValue(null)
+
+        }
+
 }

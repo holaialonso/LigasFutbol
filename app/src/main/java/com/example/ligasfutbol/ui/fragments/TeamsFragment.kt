@@ -19,25 +19,32 @@ import com.example.ligasfutbol.ui.adapter.TeamsAdapter
 import com.example.ligasfutbol.ui.model.League
 import com.example.ligasfutbol.ui.model.Team
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.database.FirebaseDatabase
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URLEncoder
 
-class TeamsFragment : Fragment () {
+class TeamsFragment : Fragment (){
 
     private lateinit var binding: TeamsFragmentBinding
     private lateinit var nameLeague : String
     private lateinit var teamsAdapter: TeamsAdapter
     private lateinit var recyclerTeams : RecyclerView
-
+    private lateinit var database : FirebaseDatabase //servicio de base de datos
+    private lateinit var idUser : String
 
 
     //Método para pegar
     override fun onAttach (context: Context){
         super.onAttach(context)
 
+        //Inicializo la base de datos
+        database = FirebaseDatabase.getInstance("https://ial-ligas24-default-rtdb.europe-west1.firebasedatabase.app/")
+
+
         //Obtengo el nombre de la liga
         nameLeague= arguments?.getString("nameLeague").toString()
+        idUser=arguments?.getString("idUser").toString()
     }
 
     //Método que muestra lo que hay en el fragment
@@ -68,6 +75,7 @@ class TeamsFragment : Fragment () {
         super.onViewCreated(view, savedInstanceState)
 
 
+
     }
 
     //Método para despegar el fragment
@@ -90,7 +98,7 @@ class TeamsFragment : Fragment () {
                 //Recorro la información que tengo
                 for(i in 0 until result.length()){
                     val element = result[i] as JSONObject
-                    var team : Team = Team(element.getString("strTeam"), element.getString("strStadiumThumb"), false)
+                    var team : Team = Team(element.getString("idTeam").toInt(), element.getString("strTeam"), element.getString("strStadiumThumb"), false)
                     println(team)
                     teamsAdapter.addElement(team)
 
@@ -106,5 +114,9 @@ class TeamsFragment : Fragment () {
         //Hago la petición
         Volley.newRequestQueue(requireContext()).add(request)
     }
+
+
+
+
 
 }
