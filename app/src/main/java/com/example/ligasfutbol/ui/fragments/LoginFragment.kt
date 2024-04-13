@@ -89,6 +89,7 @@ class LoginFragment : Fragment() {
                 if(it.isSuccessful){
                     idUser=auth.currentUser!!.uid //me da el usuario que está actualmente logueado en la aplicación
                     val intent : Intent = Intent (requireContext(), SecondActivity::class.java)
+                        intent.putExtra("idUser", idUser)
                         startActivity(intent)
 
                 }
