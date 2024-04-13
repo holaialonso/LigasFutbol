@@ -8,27 +8,23 @@
     android:background="@color/backgroundColor"
     tools:context=".ui.activities.SecondActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:title=""
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="@color/redNav"
-        android:layout_gravity="bottom"
-        app:layout_anchorGravity="bottom"
-         >
+  <androidx.appcompat.widget.Toolbar
+      android:id="@+id/toolbar"
+      android:title=""
+      android:layout_width="match_parent"
+      android:layout_height="70dp"
+      android:background="@color/redNav"
+      android:layout_gravity="bottom"
+      app:layout_anchorGravity="bottom" />
 
-        <TextView
-            style="@style/toolbarTitle"
-            android:text="titulo\nToolbar!!!"
-            android:id="@+id/toolbar_title" />
 
-    </androidx.appcompat.widget.Toolbar>
-
-    <include
+  <include
         layout="@layout/content_second"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="80dp" />
+        android:layout_marginBottom="80dp"
+        />
+
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

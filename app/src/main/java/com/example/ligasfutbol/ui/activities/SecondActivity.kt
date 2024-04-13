@@ -1,8 +1,13 @@
 package com.example.ligasfutbol.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ligasfutbol.R
@@ -20,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 
+
 class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListener, TeamsAdapter.onRecyclerTeamsListener{
 
     // private lateinit var appBarConfiguration: AppBarConfiguration
@@ -33,7 +39,6 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
         //Inicializo la base de datos
         database = FirebaseDatabase.getInstance("https://ial-ligas24-default-rtdb.europe-west1.firebasedatabase.app/")
 
-
         //Binding
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -43,20 +48,13 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
         supportActionBar?.title= ""
 
         //Compruebo si tengo algún parámetro en el intent
-            if (intent.hasExtra("idUser")) {
-                idUser = intent.extras!!.getString("idUser").toString()
-                setTitleMenu(idUser)
-            }
+        if (intent.hasExtra("idUser")) {
+            idUser = intent.extras!!.getString("idUser").toString()
+            setTitleMenu(idUser)
+        }
 
 
-        /*val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -64,21 +62,36 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
         return true
     }
 
-    /*   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-           // Handle action bar item clicks here. The action bar will
-           // automatically handle clicks on the Home/Up button, so long
-           // as you specify a parent activity in AndroidManifest.xml.
-          /* return when (item.itemId) {
-               R.id.action_settings -> true
-               else -> super.onOptionsItemSelected(item)
-           }*/
-       }*/
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-    /* override fun onSupportNavigateUp(): Boolean {
-         val navController = findNavController(R.id.nav_host_fragment_content_main)
-         return navController.navigateUp(appBarConfiguration)
-                 || super.onSupportNavigateUp()
-     }*/
+        return when (item.itemId) {
+            R.id.menu_home -> {
+
+                val fragment = getCurrentFragment()
+
+                true;
+            }
+
+            R.id.menu_favorites -> {
+                // Acción para el primer ítem del menú
+                true
+            }
+
+            R.id.menu_exit_session -> { //volver a la pantalla de login
+                val intent : Intent = Intent (this, MainActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            R.id.menu_exit_app -> { //cerrar la app
+                finishAffinity()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+
+        return true
+    }
+
 
 
     //Método para obtener el nombre del usuario
@@ -90,8 +103,8 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
             //Cuando un dato ha cambiado: me devuelve la foto del nodo por el que estoy preguntado
             override fun onDataChange(snapshot : DataSnapshot){
                 aux= snapshot.child("name").value.toString()
-                println("referencia bbdd dentro ->"+aux)
-                binding.toolbarTitle.setText("Hola\n"+aux)
+
+               // binding.toolbarTitle.setText("Hola\n"+aux)
 
             }
 
@@ -106,13 +119,10 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
         //Método para ir de la home -> al fragment de equipos
         override fun onLeagueSelected(league: League) {
 
-            // Obtengo el fragment actual
-            val fragmentManager = supportFragmentManager
-            val fragment = fragmentManager.findFragmentById(R.id.nav_host_fragment_content_second)
+            var fragment=getCurrentFragment()
 
             //Cambio el fragmen al de equipos
             if (fragment != null) {
-                println("no es nulo")
 
                 var bundle = Bundle()
                 bundle.putString("nameLeague", league.name)
@@ -142,5 +152,18 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
             referencia.child("name").setValue(null)
 
         }
+
+
+        //Método para obtener el fragment que está actualmente cargado
+        private fun getCurrentFragment() : Fragment? {
+
+            // Obtengo el fragment actual
+            val fragmentManager = supportFragmentManager
+            val fragment = fragmentManager.findFragmentById(R.id.nav_host_fragment_content_second)
+                println("id del fragment->"+fragment?.id)
+            return fragment
+        }
+
+
 
 }

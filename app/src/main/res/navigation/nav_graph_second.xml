@@ -18,5 +18,9 @@
         android:id="@+id/teamsFragment"
         android:name="com.example.ligasfutbol.ui.fragments.TeamsFragment"
         android:label="TeamsFragment"
-        tools:layout="@layout/teams_fragment"/>
+        tools:layout="@layout/teams_fragment">
+        <action
+            android:id="@+id/action_teamsFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

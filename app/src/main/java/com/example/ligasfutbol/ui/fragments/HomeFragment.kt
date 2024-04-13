@@ -101,4 +101,7 @@ class HomeFragment : Fragment() {
     }
 
 
+    fun setNavigateHome(){
+        findNavController().navigate(R.id.action_teamsFragment_to_homeFragment)
+    }
 }
