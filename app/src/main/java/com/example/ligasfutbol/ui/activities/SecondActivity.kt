@@ -3,9 +3,12 @@ package com.example.ligasfutbol.ui.activities
 import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.findNavController
 import com.example.ligasfutbol.R
 import com.example.ligasfutbol.databinding.ActivitySecondBinding
 import com.example.ligasfutbol.ui.adapter.LeagueAdapter
+import com.example.ligasfutbol.ui.adapter.TeamsAdapter
+import com.example.ligasfutbol.ui.fragments.HomeFragment
 import com.example.ligasfutbol.ui.model.League
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -14,7 +17,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 
-class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListener {
+class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListener, TeamsAdapter.onRecyclerTeamsListener{
 
     // private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivitySecondBinding
@@ -98,6 +101,24 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
     //Métodos de la interfaz
     override fun onLeagueSelected(league: League) {
 
-        println("Me voy al detalle de los equipos de la liga ->"+league.name)
+        // Obtén el FragmentManager
+        val fragmentManager = supportFragmentManager
+
+    // Encuentra el fragmento actual
+        val fragment = fragmentManager.findFragmentById(R.id.nav_host_fragment_content_second)
+        println(fragment)
+    // Verifica si el fragmento encontrado no es nulo
+        if (fragment != null) {
+            println("no es nulo")
+
+            var bundle = Bundle()
+            bundle.putString("nameLeague", league.name)
+
+            fragment.findNavController().navigate(R.id.action_homeFragment_to_teamsFragment, bundle)
+        } else {
+            // El fragmento no está presente en la actividad actual
+        }
+
+
     }
 }

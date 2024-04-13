@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,11 +21,12 @@ import com.example.ligasfutbol.ui.model.Team
 import com.google.android.material.snackbar.Snackbar
 import org.json.JSONArray
 import org.json.JSONObject
+import java.net.URLEncoder
 
 class TeamsFragment : Fragment () {
 
     private lateinit var binding: TeamsFragmentBinding
-    private lateinit var leagueName : String
+    private lateinit var nameLeague : String
     private lateinit var teamsAdapter: TeamsAdapter
     private lateinit var recyclerTeams : RecyclerView
 
@@ -35,7 +37,7 @@ class TeamsFragment : Fragment () {
         super.onAttach(context)
 
         //Obtengo el nombre de la liga
-        leagueName= arguments?.getString("leagueName").toString()
+        nameLeague= arguments?.getString("nameLeague").toString()
     }
 
     //Método que muestra lo que hay en el fragment
@@ -45,6 +47,9 @@ class TeamsFragment : Fragment () {
         // Método para importar y visualizar las ligas
         teamsAdapter = TeamsAdapter(ArrayList(), requireContext(), "main")
         makeLisTeams()
+
+        //Cambio el nombre de la liga
+        binding.root.findViewById<TextView>(R.id.labelTeams_Subtitle).setText(nameLeague)
 
         // Encuentra la RecyclerView dentro de binding.root
         recyclerTeams = binding.root.findViewById<RecyclerView>(R.id.recycler_teams)
@@ -76,7 +81,7 @@ class TeamsFragment : Fragment () {
 
         //Monto la petición
         val request : JsonObjectRequest = JsonObjectRequest(
-            "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=English%20Premier%20League",
+            "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l="+ URLEncoder.encode(nameLeague, "UTF-8"),
             {
                 //RESPUESTA DE DATOS
                 //Lo que me devuelve la API
@@ -86,6 +91,7 @@ class TeamsFragment : Fragment () {
                 for(i in 0 until result.length()){
                     val element = result[i] as JSONObject
                     var team : Team = Team(element.getString("strTeam"), element.getString("strStadiumThumb"), false)
+                    println(team)
                     teamsAdapter.addElement(team)
 
                 }

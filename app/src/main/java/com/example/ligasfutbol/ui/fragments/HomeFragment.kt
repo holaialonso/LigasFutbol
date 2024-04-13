@@ -100,4 +100,5 @@ class HomeFragment : Fragment() {
         Volley.newRequestQueue(requireContext()).add(request)
     }
 
+
 }

@@ -16,14 +16,17 @@
             android:id="@+id/labelTeams_Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:text="Equipos de la liga" />
+            android:layout_marginBottom="5dp"
+            android:padding="0dp"
+            android:layout_marginTop="18dp"
+            android:text="Equipos" />
 
         <TextView
             style="@style/labelSubTitle"
             android:id="@+id/labelTeams_Subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:text="TextView" />
 
         <androidx.recyclerview.widget.RecyclerView

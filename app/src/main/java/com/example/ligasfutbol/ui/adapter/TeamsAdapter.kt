@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ligasfutbol.R
 import com.example.ligasfutbol.ui.model.League
 import com.example.ligasfutbol.ui.model.Team
+import com.bumptech.glide.Glide
+import com.example.ligasfutbol.ui.helpers.GrayscaleTransformation
+
 
 class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto : Context, private val activity : String): RecyclerView.Adapter<TeamsAdapter.MyHolder>() {
 
@@ -62,7 +65,13 @@ class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto 
         override fun onBindViewHolder(holder: TeamsAdapter.MyHolder, position: Int) {
 
             var team = teams[position]
-            //holder.name.text = team.name
+            holder.name.text = team.name
+
+            //Si no tengo la imagen -> que no la cargue
+            if(team.img!="null"){
+                Glide.with(contexto).load(team.img).into(holder.image)
+            }
+
 
             //Pulsaciones de los botones
 
