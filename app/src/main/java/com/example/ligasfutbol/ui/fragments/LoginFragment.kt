@@ -1,6 +1,7 @@
 package com.example.ligasfutbol.ui.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.ligasfutbol.R
 import com.example.ligasfutbol.databinding.LoginFragmentBinding
+import com.example.ligasfutbol.ui.activities.SecondActivity
 import com.example.ligasfutbol.ui.dialog.MessageDialog
 import com.example.ligasfutbol.ui.helpers.Helpers
 import com.google.firebase.auth.FirebaseAuth
@@ -86,6 +88,9 @@ class LoginFragment : Fragment() {
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener{
                 if(it.isSuccessful){
                     idUser=auth.currentUser!!.uid //me da el usuario que está actualmente logueado en la aplicación
+                    val intent : Intent = Intent (requireContext(), SecondActivity::class.java)
+                        startActivity(intent)
+
                 }
                 else{
                     title = "Error"

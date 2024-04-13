@@ -1,0 +1,13 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/menuItem">
+
+    <ImageView
+        style="@style/iconMenu"
+        android:src="@drawable/logout" />
+
+    <TextView
+        style="@style/textItemMenu"
+        android:id="@+id/title"
+        android:text="Cerrar sesión" />
+
+</LinearLayout>

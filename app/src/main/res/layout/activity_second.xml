@@ -5,16 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/backgroundColor"
     tools:context=".ui.activities.SecondActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
+        android:title=""
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="70dp"
+        android:background="@color/redNav"
+        android:layout_gravity="bottom"
+        app:layout_anchorGravity="bottom"
+         >
 
-    <include layout="@layout/content_second" />
+        <TextView
+            style="@style/toolbarTitle"
+            android:text="titulo\nToolbar!!!"
+            android:id="@+id/toolbar_title" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <!--<include
+        layout="@layout/content_second"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="60dp"
+    />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

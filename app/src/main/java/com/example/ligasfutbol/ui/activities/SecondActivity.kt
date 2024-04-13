@@ -1,7 +1,12 @@
 package com.example.ligasfutbol.ui.activities
 
 import android.os.Bundle
+import android.text.Html
+import android.view.Gravity
+import android.view.Menu
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import com.example.ligasfutbol.R
 import com.example.ligasfutbol.databinding.ActivityMainBinding
 import com.example.ligasfutbol.databinding.ActivitySecondBinding
 
@@ -16,9 +21,10 @@ class SecondActivity : AppCompatActivity() {
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        /*setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.title= ""
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        /*val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
@@ -28,11 +34,10 @@ class SecondActivity : AppCompatActivity() {
         }*/
     }
 
-    /*  override fun onCreateOptionsMenu(menu: Menu): Boolean {
-          // Inflate the menu; this adds items to the action bar if it is present.
-         // menuInflater.inflate(R.menu.menu_main, menu)
-          //return true
-      }*/
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_second, menu)
+        return true
+    }
 
     /*   override fun onOptionsItemSelected(item: MenuItem): Boolean {
            // Handle action bar item clicks here. The action bar will

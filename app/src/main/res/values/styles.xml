@@ -83,4 +83,44 @@
     </style>
 
 
+    <!-- MENU -->
+        <style name="menuItem">
+            <item name="android:layout_width">75dp</item>
+            <item name="android:layout_height">wrap_content</item>
+            <item name="android:orientation">vertical</item>
+            <item name="android:gravity">center</item>
+        </style>
+
+        <style name="iconMenu">
+            <item name="android:layout_width">wrap_content</item>
+            <item name="android:layout_height">19dp</item>
+            <item name="android:layout_gravity">center</item>
+        </style>
+
+        <style name="textItemMenu">
+            <item name="android:textColor">#ffffff</item>
+            <item name="android:layout_width">wrap_content</item>
+            <item name="android:layout_height">wrap_content</item>
+            <item name="android:textSize">9dp</item>
+            <item name="android:layout_marginTop">4dp</item>
+            <item name="android:textStyle">bold</item>
+            <item name="android:textAppearance">?android:textAppearanceSmall</item>
+            <item name="android:gravity">center</item>
+            <item name="android:textAllCaps">true</item>
+            <item name="android:fontFamily">@font/roboto_regular</item>
+
+        </style>
+
+        <!-- title del toolbar -->
+        <style name="toolbarTitle">
+            <item name="android:textColor">#ffffff</item>
+            <item name="android:layout_width">wrap_content</item>
+            <item name="android:layout_height">wrap_content</item>
+            <item name="android:textSize">9dp</item>
+            <item name="android:textStyle">bold</item>
+            <item name="android:textAllCaps">true</item>
+            <item name="android:gravity">center</item>
+            <item name="android:fontFamily">@font/roboto_regular</item>
+        </style>
+
 </resources>
