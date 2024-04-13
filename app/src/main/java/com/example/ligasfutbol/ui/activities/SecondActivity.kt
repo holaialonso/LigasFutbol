@@ -62,6 +62,7 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_second, menu)
+
         return true
     }
 
@@ -160,6 +161,7 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
             val referencia = database.getReference("users").child(idUser).child("favorite").child(team.id.toString()) //obtengo el nodo
             referencia.child("name").setValue(team.name)
             referencia.child("image").setValue(team.img)
+            referencia.child("id").setValue(team.id)
 
         }
 
@@ -168,7 +170,7 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
 
             //Guardo la parte relativa a la base de datos
             val referencia = database.getReference("users").child(idUser).child("favorite").child(team.id.toString()) //obtengo el nodo
-            referencia.child("name").setValue(null)
+            referencia.removeValue()
 
         }
 

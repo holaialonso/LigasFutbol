@@ -37,6 +37,8 @@ class TeamsFragment : Fragment (){
     private lateinit var idUser : String
     private var isFavorite : Boolean = false
 
+    private lateinit var textNoFavorites : View
+
 
     //Método para pegar
     override fun onAttach (context: Context){
@@ -59,6 +61,7 @@ class TeamsFragment : Fragment (){
         // Método para importar y visualizar las ligas
         teamsAdapter = TeamsAdapter(ArrayList(), requireContext(), "main")
 
+
         if (!isFavorite){
             binding.root.findViewById<TextView>(R.id.labelTeams_Title).setText("Equipos")
             binding.root.findViewById<TextView>(R.id.labelTeams_Subtitle).setText(nameLeague)
@@ -70,7 +73,6 @@ class TeamsFragment : Fragment (){
             makeListFavTeams()
         }
 
-
         // Encuentra la RecyclerView dentro de binding.root
         recyclerTeams = binding.root.findViewById<RecyclerView>(R.id.recycler_teams)
 
@@ -78,6 +80,7 @@ class TeamsFragment : Fragment (){
         recyclerTeams.adapter = teamsAdapter
         recyclerTeams.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
 
+        textNoFavorites=binding.root.findViewById<TextView>(R.id.textNoFavorites)
 
         return binding.root
     }
@@ -86,9 +89,6 @@ class TeamsFragment : Fragment (){
     override fun onViewCreated(view : View, savedInstanceState : Bundle?){
 
         super.onViewCreated(view, savedInstanceState)
-
-
-
     }
 
     //Método para despegar el fragment
@@ -113,9 +113,7 @@ class TeamsFragment : Fragment (){
                     val element = result[i] as JSONObject
                     var team : Team = Team(element.getString("idTeam").toInt(), element.getString("strTeam"), element.getString("strStadiumThumb"), false)
                     teamsAdapter.addElement(team)
-
                 }
-
             },
             {
                 //ERROR
@@ -125,6 +123,8 @@ class TeamsFragment : Fragment (){
 
         //Hago la petición
         Volley.newRequestQueue(requireContext()).add(request)
+
+
     }
 
     //Método para sacar los equipos favoritos del usuario
@@ -138,13 +138,11 @@ class TeamsFragment : Fragment (){
                     // Obtener los valores de la base de datos
                     var name : String = dataSnapshot.child("name").getValue(String::class.java).toString()
                     var image : String = dataSnapshot.child("image").getValue(String::class.java).toString()
+                    var id : Int = dataSnapshot.child("id").getValue(Int::class.java)?.toInt() ?: 0
 
                     //Crear los equipos y pasarlos al recycler
-                    var team : Team = Team (10, name, image, true)
+                    var team : Team = Team (id, name, image, true)
                     teamsAdapter.addElement(team)
-
-
-                    // Realizar operaciones con la instancia de Team, por ejemplo, agregarla a una lista
                 }
             }
 
@@ -152,8 +150,23 @@ class TeamsFragment : Fragment (){
                 // Manejo de errores en caso de cancelación
             }
         })
+
+
     }
 
+
+    private fun showRecyclerTeams(){
+
+        println("teams -> "+teamsAdapter.getItemCount())
+
+        if(teamsAdapter.getItemCount()==0) {
+            textNoFavorites.visibility = View.VISIBLE
+        }
+        else{
+           textNoFavorites.visibility = View.GONE
+
+        }
+    }
 
 
 }

@@ -94,8 +94,7 @@ class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto 
             //Botón para eliminar el favorito
                 holder.buttonNoFav?.setOnClickListener(){
                     listener.onTeamNoFavorite(team)
-                    team.favorite=false
-                    updateList(team, position)
+                    removeElement(position)
                 }
 
         }
@@ -116,6 +115,18 @@ class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto 
             teams[position]=element
             allTeams=teams
             notifyItemChanged(position)
+        }
+
+        //Método para eliminar un elemento
+        fun removeElement(position : Int){
+
+            //Compruebo antes de eliminar el elemento que la lista no la tengo vacía y que no estoy intentando acceder a un elemento de ésta que no exista
+            if ((teams.isNotEmpty())&&(position in 0 until teams.size)) {
+                teams.removeAt(position)
+                notifyItemRemoved(position)
+                notifyItemRangeChanged(position, teams.size)
+            }
+
         }
 
     //COMUNICACIÓN ADAPTER -> ACTIVITY/FRAGMENT

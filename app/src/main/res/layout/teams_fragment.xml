@@ -29,6 +29,16 @@
             android:layout_marginBottom="20dp"
             android:text="TextView" />
 
+        <TextView
+            style="@style/labelForm"
+            android:id="@+id/textNoFavorites"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="12dp"
+            android:text="No hay equipos marcados como favoritos."
+            android:visibility="gone"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_teams"
             android:layout_marginStart="5dp"
