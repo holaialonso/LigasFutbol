@@ -8,10 +8,13 @@ import android.view.View
 import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ligasfutbol.R
 import com.example.ligasfutbol.databinding.ActivitySecondBinding
+import com.example.ligasfutbol.databinding.HomeFragmentBinding
 import com.example.ligasfutbol.ui.adapter.LeagueAdapter
 import com.example.ligasfutbol.ui.adapter.TeamsAdapter
 import com.example.ligasfutbol.ui.fragments.HomeFragment
@@ -67,13 +70,28 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
         return when (item.itemId) {
             R.id.menu_home -> {
 
-                val fragment = getCurrentFragment()
+                //Si estoy en otro fragment -> vuelvo del otro fragment a la home
+                if(!getCurrentTypeFragment(R.id.homeFragment)){
+                    getCurrentFragment()?.findNavController()?.navigate(R.id.action_teamsFragment_to_homeFragment, null)
+                }
 
                 true;
             }
 
             R.id.menu_favorites -> {
-                // Acción para el primer ítem del menú
+
+                var bundle = Bundle()
+                    bundle.putString("idUser", idUser)
+                    bundle.putBoolean("isFavorite", true)
+
+                //Si estoy en otro fragment diferente
+                if(!getCurrentTypeFragment(R.id.teamsFragment)){
+                    getCurrentFragment()?.findNavController()?.navigate(R.id.action_homeFragment_to_teamsFragment, bundle)
+                }
+                else{//Si estoy en la misma
+                    getCurrentFragment()?.findNavController()?.navigate(R.id.action_teamsFragment_self, bundle)
+                }
+
                 true
             }
 
@@ -122,11 +140,12 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
             var fragment=getCurrentFragment()
 
             //Cambio el fragmen al de equipos
-            if (fragment != null) {
+            if ((fragment != null)&&(getCurrentTypeFragment(R.id.homeFragment))) {
 
                 var bundle = Bundle()
                 bundle.putString("nameLeague", league.name)
                 bundle.putString("idUser", idUser)
+                bundle.putBoolean("isFavorite", false)
 
                 fragment.findNavController().navigate(R.id.action_homeFragment_to_teamsFragment, bundle)
             }
@@ -160,9 +179,32 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
             // Obtengo el fragment actual
             val fragmentManager = supportFragmentManager
             val fragment = fragmentManager.findFragmentById(R.id.nav_host_fragment_content_second)
-                println("id del fragment->"+fragment?.id)
+
             return fragment
         }
+
+
+        //Método para saber qué tipo de fragment es
+        private fun getCurrentTypeFragment(fragmentId : Int) : Boolean{
+
+            var aux = false
+            val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_second) as NavHostFragment
+            val navController = navHostFragment.navController
+
+            val homeFragmentId = fragmentId //fragmentid
+
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                if (destination.id == homeFragmentId) {
+                    aux = true
+                }
+            }
+
+            println("fragmento ->"+aux)
+
+            return aux
+
+        }
+
 
 
 

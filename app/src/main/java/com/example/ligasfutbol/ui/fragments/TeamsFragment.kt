@@ -19,7 +19,10 @@ import com.example.ligasfutbol.ui.adapter.TeamsAdapter
 import com.example.ligasfutbol.ui.model.League
 import com.example.ligasfutbol.ui.model.Team
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URLEncoder
@@ -32,6 +35,7 @@ class TeamsFragment : Fragment (){
     private lateinit var recyclerTeams : RecyclerView
     private lateinit var database : FirebaseDatabase //servicio de base de datos
     private lateinit var idUser : String
+    private var isFavorite : Boolean = false
 
 
     //Método para pegar
@@ -45,6 +49,7 @@ class TeamsFragment : Fragment (){
         //Obtengo el nombre de la liga
         nameLeague= arguments?.getString("nameLeague").toString()
         idUser=arguments?.getString("idUser").toString()
+        isFavorite= arguments?.getBoolean("isFavorite") == true
     }
 
     //Método que muestra lo que hay en el fragment
@@ -53,10 +58,18 @@ class TeamsFragment : Fragment (){
 
         // Método para importar y visualizar las ligas
         teamsAdapter = TeamsAdapter(ArrayList(), requireContext(), "main")
-        makeLisTeams()
 
-        //Cambio el nombre de la liga
-        binding.root.findViewById<TextView>(R.id.labelTeams_Subtitle).setText(nameLeague)
+        if (!isFavorite){
+            binding.root.findViewById<TextView>(R.id.labelTeams_Title).setText("Equipos")
+            binding.root.findViewById<TextView>(R.id.labelTeams_Subtitle).setText(nameLeague)
+            makeLisTeams()
+        }
+        else{
+            binding.root.findViewById<TextView>(R.id.labelTeams_Title).setText("Favoritos")
+            binding.root.findViewById<TextView>(R.id.labelTeams_Subtitle).setText("Lo que has destacado")
+            makeListFavTeams()
+        }
+
 
         // Encuentra la RecyclerView dentro de binding.root
         recyclerTeams = binding.root.findViewById<RecyclerView>(R.id.recycler_teams)
@@ -85,7 +98,7 @@ class TeamsFragment : Fragment (){
 
 
     //Método para consultar a la API las ligas
-    fun makeLisTeams(){
+    private fun makeLisTeams(){
 
         //Monto la petición
         val request : JsonObjectRequest = JsonObjectRequest(
@@ -99,7 +112,6 @@ class TeamsFragment : Fragment (){
                 for(i in 0 until result.length()){
                     val element = result[i] as JSONObject
                     var team : Team = Team(element.getString("idTeam").toInt(), element.getString("strTeam"), element.getString("strStadiumThumb"), false)
-                    println(team)
                     teamsAdapter.addElement(team)
 
                 }
@@ -115,7 +127,32 @@ class TeamsFragment : Fragment (){
         Volley.newRequestQueue(requireContext()).add(request)
     }
 
+    //Método para sacar los equipos favoritos del usuario
+    private fun makeListFavTeams(){
 
+        val referencia = database.getReference("users").child(idUser).child("favorite")
+        referencia.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach { dataSnapshot ->
+
+                    // Obtener los valores de la base de datos
+                    var name : String = dataSnapshot.child("name").getValue(String::class.java).toString()
+                    var image : String = dataSnapshot.child("image").getValue(String::class.java).toString()
+
+                    //Crear los equipos y pasarlos al recycler
+                    var team : Team = Team (10, name, image, true)
+                    teamsAdapter.addElement(team)
+
+
+                    // Realizar operaciones con la instancia de Team, por ejemplo, agregarla a una lista
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Manejo de errores en caso de cancelación
+            }
+        })
+    }
 
 
 
