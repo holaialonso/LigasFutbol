@@ -55,7 +55,7 @@
 
         <ImageButton
             android:id="@+id/buttonFavoriteTeam"
-            android:layout_width="wrap_content"
+            android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/starblack"
             android:layout_weight="1"
@@ -65,7 +65,7 @@
 
         <ImageButton
             android:id="@+id/buttonDefavoriteTeam"
-            android:layout_width="wrap_content"
+            android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/starfavorite"
             android:layout_weight="1"
