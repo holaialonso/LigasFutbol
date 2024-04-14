@@ -105,6 +105,7 @@
             <item name="android:layout_width">wrap_content</item>
             <item name="android:layout_height">19dp</item>
             <item name="android:layout_gravity">center</item>
+            <item name="android:layout_marginTop">5dp</item>
         </style>
 
         <style name="textItemMenu">

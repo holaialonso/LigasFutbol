@@ -63,27 +63,22 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_second, menu)
 
-        return true
-    }
+        //Opciones del menú -> tienen un actionLayout cada uno
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        return when (item.itemId) {
-            R.id.menu_home -> {
-
+            //Home
+            menu?.findItem(R.id.menu_home)?.actionView?.setOnClickListener{
                 //Si estoy en otro fragment -> vuelvo del otro fragment a la home
                 if(!getCurrentTypeFragment(R.id.homeFragment)){
                     getCurrentFragment()?.findNavController()?.navigate(R.id.action_teamsFragment_to_homeFragment, null)
                 }
-
-                true;
             }
 
-            R.id.menu_favorites -> {
+            //Favoritos
+            menu?.findItem(R.id.menu_favorites)?.actionView?.setOnClickListener{
 
                 var bundle = Bundle()
-                    bundle.putString("idUser", idUser)
-                    bundle.putBoolean("isFavorite", true)
+                bundle.putString("idUser", idUser)
+                bundle.putBoolean("isFavorite", true)
 
                 //Si estoy en otro fragment diferente
                 if(!getCurrentTypeFragment(R.id.teamsFragment)){
@@ -92,22 +87,30 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
                 else{//Si estoy en la misma
                     getCurrentFragment()?.findNavController()?.navigate(R.id.action_teamsFragment_self, bundle)
                 }
-
-                true
             }
 
-            R.id.menu_exit_session -> { //volver a la pantalla de login
+
+            //Cerrar sesión
+            menu?.findItem(R.id.menu_exit_session)?.actionView?.setOnClickListener{
                 val intent : Intent = Intent (this, MainActivity::class.java)
                 startActivity(intent)
-                true
             }
-            R.id.menu_exit_app -> { //cerrar la app
-                finishAffinity()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
 
+
+            //Salir de la aplicación
+            menu?.findItem(R.id.menu_exit_app)?.actionView?.setOnClickListener{
+                finishAffinity()
+            }
+
+
+        //fin opciones
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        //Los elementos del menú tienen un action layout por encima, no escuchan la pulsación aquí. La escuchan en el onCreateOptionsMenu.
         return true
     }
 
@@ -121,13 +124,17 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
         addListenerForSingleValueEvent(object : ValueEventListener {
             //Cuando un dato ha cambiado: me devuelve la foto del nodo por el que estoy preguntado
             override fun onDataChange(snapshot : DataSnapshot){
-                aux= snapshot.child("name").value.toString()
 
-               // binding.toolbarTitle.setText("Hola\n"+aux)
+                aux= snapshot.child("name").value.toString()
+                aux = "¡Hola "+aux+"!"
+                aux = if (aux.length>15)  aux.replace("¡Hola", "¡Hola\n") else aux
+
+                binding.toolbarTitle.setText(aux)
 
             }
 
             override fun onCancelled(error : DatabaseError){
+                //Errores
             }
         })
 
@@ -175,6 +182,9 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
         }
 
 
+
+    //
+
         //Método para obtener el fragment que está actualmente cargado
         private fun getCurrentFragment() : Fragment? {
 
@@ -193,15 +203,13 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
             val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_second) as NavHostFragment
             val navController = navHostFragment.navController
 
-            val homeFragmentId = fragmentId //fragmentid
+            val fragment = fragmentId //fragmentid
 
             navController.addOnDestinationChangedListener { _, destination, _ ->
-                if (destination.id == homeFragmentId) {
+                if (destination.id == fragment) {
                     aux = true
                 }
             }
-
-            println("fragmento ->"+aux)
 
             return aux
 

@@ -15,7 +15,18 @@
       android:layout_height="70dp"
       android:background="@color/redNav"
       android:layout_gravity="bottom"
-      app:layout_anchorGravity="bottom" />
+      app:layout_anchorGravity="bottom">
+
+    <TextView
+        android:id="@+id/toolbarTitle"
+        style="@style/toolbarTitle"
+        android:layout_marginBottom="0dp"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:text="" />
+
+  </androidx.appcompat.widget.Toolbar>
 
 
   <include

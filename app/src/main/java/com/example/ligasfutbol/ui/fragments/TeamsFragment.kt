@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,8 +37,8 @@ class TeamsFragment : Fragment (){
     private lateinit var database : FirebaseDatabase //servicio de base de datos
     private lateinit var idUser : String
     private var isFavorite : Boolean = false
-
-    private lateinit var textNoFavorites : View
+    private lateinit var teams : ArrayList<Team> //lista de equipos
+    private lateinit var favTeams : ArrayList<Team> //equipos favoritos
 
 
     //Método para pegar
@@ -58,14 +59,13 @@ class TeamsFragment : Fragment (){
     override fun onCreateView(inflater : LayoutInflater, container : ViewGroup?, savedInstanceState : Bundle?) : View {
         binding = TeamsFragmentBinding.inflate(inflater, container, false)
 
-        // Método para importar y visualizar las ligas
+        // Cargar los equipos
         teamsAdapter = TeamsAdapter(ArrayList(), requireContext(), "main")
-
 
         if (!isFavorite){
             binding.root.findViewById<TextView>(R.id.labelTeams_Title).setText("Equipos")
             binding.root.findViewById<TextView>(R.id.labelTeams_Subtitle).setText(nameLeague)
-            makeLisTeams()
+            makeListTeams()
         }
         else{
             binding.root.findViewById<TextView>(R.id.labelTeams_Title).setText("Favoritos")
@@ -73,14 +73,13 @@ class TeamsFragment : Fragment (){
             makeListFavTeams()
         }
 
-        // Encuentra la RecyclerView dentro de binding.root
+        // Encuentro el recycler
         recyclerTeams = binding.root.findViewById<RecyclerView>(R.id.recycler_teams)
 
         // Configura el adaptador y el layoutManager de la RecyclerView
         recyclerTeams.adapter = teamsAdapter
         recyclerTeams.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
 
-        textNoFavorites=binding.root.findViewById<TextView>(R.id.textNoFavorites)
 
         return binding.root
     }
@@ -98,7 +97,7 @@ class TeamsFragment : Fragment (){
 
 
     //Método para consultar a la API las ligas
-    private fun makeLisTeams(){
+    private fun makeListTeams(){
 
         //Monto la petición
         val request : JsonObjectRequest = JsonObjectRequest(
@@ -108,11 +107,15 @@ class TeamsFragment : Fragment (){
                 //Lo que me devuelve la API
                 val result : JSONArray = it.getJSONArray("teams")
 
+                showNoResults(result.length())
+
                 //Recorro la información que tengo
                 for(i in 0 until result.length()){
                     val element = result[i] as JSONObject
+
                     var team : Team = Team(element.getString("idTeam").toInt(), element.getString("strTeam"), element.getString("strStadiumThumb"), false)
                     teamsAdapter.addElement(team)
+
                 }
             },
             {
@@ -125,14 +128,17 @@ class TeamsFragment : Fragment (){
         Volley.newRequestQueue(requireContext()).add(request)
 
 
+
     }
 
     //Método para sacar los equipos favoritos del usuario
-    private fun makeListFavTeams(){
+    private fun makeListFavTeams() {
 
         val referencia = database.getReference("users").child(idUser).child("favorite")
         referencia.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+
+                showNoResults(snapshot.childrenCount.toInt())
                 snapshot.children.forEach { dataSnapshot ->
 
                     // Obtener los valores de la base de datos
@@ -148,24 +154,26 @@ class TeamsFragment : Fragment (){
 
             override fun onCancelled(error: DatabaseError) {
                 // Manejo de errores en caso de cancelación
+                println("Error de consulta en Firebase: ${error.message}")
             }
         })
+
 
 
     }
 
 
-    private fun showRecyclerTeams(){
+    private fun showNoResults(numResults : Int){
 
-        println("teams -> "+teamsAdapter.getItemCount())
-
-        if(teamsAdapter.getItemCount()==0) {
-            textNoFavorites.visibility = View.VISIBLE
+        if(numResults>0){
+            view?.findViewById<ConstraintLayout>(R.id.contentNoResults)?.visibility=View.GONE
+            view?.findViewById<TextView>(R.id.textNoResults)?.setText("Un segundo, estamos cargando los equipos.")
         }
         else{
-           textNoFavorites.visibility = View.GONE
-
+            view?.findViewById<ConstraintLayout>(R.id.contentNoResults)?.visibility=View.VISIBLE
+            view?.findViewById<TextView>(R.id.textNoResults)?.setText("No hay equipos para mostrar")
         }
+
     }
 
 

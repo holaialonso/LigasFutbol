@@ -40,6 +40,7 @@ class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto 
 
     }
 
+
     //Init
     init {
         listener = contexto as TeamsAdapter.onRecyclerTeamsListener
@@ -58,7 +59,7 @@ class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto 
         }
 
         override fun getItemCount(): Int {
-            return teams.size
+           return teams.size
         }
 
 
@@ -127,7 +128,10 @@ class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto 
                 notifyItemRangeChanged(position, teams.size)
             }
 
+
         }
+
+
 
     //COMUNICACIÓN ADAPTER -> ACTIVITY/FRAGMENT
         //Interfaz para la comunicación entre el adaptador y la activity
@@ -136,5 +140,8 @@ class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto 
             fun onTeamFavorite(team : Team)
 
             fun onTeamNoFavorite(team : Team)
+
+
+
         }
 }
