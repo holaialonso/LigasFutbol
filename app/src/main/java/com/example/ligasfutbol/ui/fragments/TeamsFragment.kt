@@ -37,8 +37,7 @@ class TeamsFragment : Fragment (){
     private lateinit var database : FirebaseDatabase //servicio de base de datos
     private lateinit var idUser : String
     private var isFavorite : Boolean = false
-    private lateinit var teams : ArrayList<Team> //lista de equipos
-    private lateinit var favTeams : ArrayList<Team> //equipos favoritos
+
 
 
     //Método para pegar
@@ -48,11 +47,11 @@ class TeamsFragment : Fragment (){
         //Inicializo la base de datos
         database = FirebaseDatabase.getInstance("https://ial-ligas24-default-rtdb.europe-west1.firebasedatabase.app/")
 
-
         //Obtengo el nombre de la liga
-        nameLeague= arguments?.getString("nameLeague").toString()
-        idUser=arguments?.getString("idUser").toString()
-        isFavorite= arguments?.getBoolean("isFavorite") == true
+        nameLeague = arguments?.getString("nameLeague").toString()
+        idUser = arguments?.getString("idUser").toString()
+        isFavorite = arguments?.getBoolean("isFavorite") == true
+
     }
 
     //Método que muestra lo que hay en el fragment
@@ -215,5 +214,26 @@ class TeamsFragment : Fragment (){
 
     }
 
+
+    //PERSISTENCIA
+        //Para guardar
+        override fun onSaveInstanceState(outState: Bundle) {
+            super.onSaveInstanceState(outState)
+            outState.putString("idUser", idUser)
+            outState.putString("isFavorite", isFavorite.toString())
+            outState.putString("nameLeague", nameLeague)
+
+        }
+
+        //Para recuperar
+        override fun onViewStateRestored(savedInstanceState: Bundle?) {
+            super.onViewStateRestored(savedInstanceState)
+            // Restaura el estado de las variables desde el Bundle
+            savedInstanceState?.let {
+                idUser = it.getString("idUser").toString()
+                nameLeague = it.getString("nameLeague").toString()
+                isFavorite = it.getBoolean("isFavorite")
+            }
+        }
 
 }

@@ -59,6 +59,9 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
             setTitleMenu(idUser)
         }
 
+        //Si tengo el idUsuario persistido
+        idUser=savedInstanceState?.getString("idUser") ?: idUser
+
     }
 
 
@@ -240,5 +243,12 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
 
         }
 
+    //PERSISTENCIA
+        //Para guardar
+        override fun onSaveInstanceState(outState: Bundle) {
+            super.onSaveInstanceState(outState)
+            outState.putString("idUser", idUser)
+
+        }
 
 }
