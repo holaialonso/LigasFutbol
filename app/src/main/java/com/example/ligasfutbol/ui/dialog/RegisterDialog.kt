@@ -86,7 +86,11 @@ class RegisterDialog : DialogFragment ()  {
                 activity?.finishAffinity()
             }
 
-        return builder.create()
+            // Impedir que el diálogo se cierre al tocar fuera
+            var dialog : Dialog = builder.create()
+            dialog.setCanceledOnTouchOutside(false)
+
+        return dialog
     }
 
 

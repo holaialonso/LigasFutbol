@@ -78,37 +78,38 @@ class LoginFragment : Fragment() {
     }
 
 
-    //Método para hacer el login del usuario
-    private fun makeLogin(email: String, password: String) {
+    //FIREBASE
+        //Método para hacer el login del usuario
+        private fun makeLogin(email: String, password: String) {
 
-        var idUser : String = ""
+            var idUser : String = ""
 
-        //Hacemos el login
-        if((!email.isNullOrEmpty())&&(!password.isNullOrEmpty())){
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener{
-                if(it.isSuccessful){
-                    idUser=auth.currentUser!!.uid //me da el usuario que está actualmente logueado en la aplicación
-                    val intent : Intent = Intent (requireContext(), SecondActivity::class.java)
-                        intent.putExtra("idUser", idUser)
-                        startActivity(intent)
+            //Hacemos el login
+            if((!email.isNullOrEmpty())&&(!password.isNullOrEmpty())){
+                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener{
+                    if(it.isSuccessful){
+                        idUser=auth.currentUser!!.uid //me da el usuario que está actualmente logueado en la aplicación
+                        val intent : Intent = Intent (requireContext(), SecondActivity::class.java)
+                            intent.putExtra("idUser", idUser)
+                            startActivity(intent)
 
-                }
-                else{
-                    title = "Error"
-                    text = "Se ha producido un error al iniciar sesión en el sistema con el usuario y contraseña introducidos."
-                    val dialogo : MessageDialog = MessageDialog().newInstance(title, text)
-                        dialogo.show(parentFragmentManager, null)
+                    }
+                    else{
+                        title = "Error"
+                        text = "Se ha producido un error al iniciar sesión en el sistema con el usuario y contraseña introducidos."
+                        val dialogo : MessageDialog = MessageDialog().newInstance(title, text)
+                            dialogo.show(parentFragmentManager, null)
+                    }
                 }
             }
-        }
-        else{
-            title = "Error"
-            text = "Debes rellenar el email y la contraseña."
-            val dialogo : MessageDialog = MessageDialog().newInstance(title, text)
-            dialogo.show(parentFragmentManager, null)
-        }
+            else{
+                title = "Error"
+                text = "Debes rellenar el email y la contraseña."
+                val dialogo : MessageDialog = MessageDialog().newInstance(title, text)
+                dialogo.show(parentFragmentManager, null)
+            }
 
-    }
+        }
 
 
 

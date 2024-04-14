@@ -96,73 +96,76 @@ class TeamsFragment : Fragment (){
     }
 
 
-    //Método para consultar a la API las ligas
-    private fun makeListTeams(){
+    //API
+        //Método para consultar a la API las ligas
+        private fun makeListTeams(){
 
-        //Monto la petición
-        val request : JsonObjectRequest = JsonObjectRequest(
-            "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l="+ URLEncoder.encode(nameLeague, "UTF-8"),
-            {
-                //RESPUESTA DE DATOS
-                //Lo que me devuelve la API
-                val result : JSONArray = it.getJSONArray("teams")
+            //Monto la petición
+            val request : JsonObjectRequest = JsonObjectRequest(
+                "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l="+ URLEncoder.encode(nameLeague, "UTF-8"),
+                {
+                    //RESPUESTA DE DATOS
+                    //Lo que me devuelve la API
+                    val result : JSONArray = it.getJSONArray("teams")
 
-                showNoResults(result.length())
+                    showNoResults(result.length())
 
-                //Recorro la información que tengo
-                for(i in 0 until result.length()){
-                    val element = result[i] as JSONObject
+                    //Recorro la información que tengo
+                    for(i in 0 until result.length()){
+                        val element = result[i] as JSONObject
 
-                    var team : Team = Team(element.getString("idTeam").toInt(), element.getString("strTeam"), element.getString("strStadiumThumb"), false)
-                    teamsAdapter.addElement(team)
+                        var team : Team = Team(element.getString("idTeam").toInt(), element.getString("strTeam"), element.getString("strStadiumThumb"), false)
+                        teamsAdapter.addElement(team)
 
+                    }
+                },
+                {
+                    //ERROR
+                    Snackbar.make(binding.root, "Error en la conexion", Snackbar.LENGTH_SHORT).show();
+
+                })
+
+            //Hago la petición
+            Volley.newRequestQueue(requireContext()).add(request)
+
+
+
+        }
+
+    //FIREBASE
+        //Método para sacar los equipos favoritos del usuario
+        private fun makeListFavTeams() {
+
+            val referencia = database.getReference("users").child(idUser).child("favorite")
+            referencia.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    showNoResults(snapshot.childrenCount.toInt())
+                    snapshot.children.forEach { dataSnapshot ->
+
+                        // Obtener los valores de la base de datos
+                        var name : String = dataSnapshot.child("name").getValue(String::class.java).toString()
+                        var image : String = dataSnapshot.child("image").getValue(String::class.java).toString()
+                        var id : Int = dataSnapshot.child("id").getValue(Int::class.java)?.toInt() ?: 0
+
+                        //Crear los equipos y pasarlos al recycler
+                        var team : Team = Team (id, name, image, true)
+                        teamsAdapter.addElement(team)
+                    }
                 }
-            },
-            {
-                //ERROR
-                Snackbar.make(binding.root, "Error en la conexion", Snackbar.LENGTH_SHORT).show();
 
+                override fun onCancelled(error: DatabaseError) {
+                    // Manejo de errores en caso de cancelación
+                    println("Error de consulta en Firebase: ${error.message}")
+                }
             })
 
-        //Hago la petición
-        Volley.newRequestQueue(requireContext()).add(request)
 
 
-
-    }
-
-    //Método para sacar los equipos favoritos del usuario
-    private fun makeListFavTeams() {
-
-        val referencia = database.getReference("users").child(idUser).child("favorite")
-        referencia.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-
-                showNoResults(snapshot.childrenCount.toInt())
-                snapshot.children.forEach { dataSnapshot ->
-
-                    // Obtener los valores de la base de datos
-                    var name : String = dataSnapshot.child("name").getValue(String::class.java).toString()
-                    var image : String = dataSnapshot.child("image").getValue(String::class.java).toString()
-                    var id : Int = dataSnapshot.child("id").getValue(Int::class.java)?.toInt() ?: 0
-
-                    //Crear los equipos y pasarlos al recycler
-                    var team : Team = Team (id, name, image, true)
-                    teamsAdapter.addElement(team)
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Manejo de errores en caso de cancelación
-                println("Error de consulta en Firebase: ${error.message}")
-            }
-        })
+        }
 
 
-
-    }
-
-
+    //Método para mostrar u ocultar el mensaje de "no hay resultados"
     private fun showNoResults(numResults : Int){
 
         if(numResults>0){

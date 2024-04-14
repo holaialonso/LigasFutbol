@@ -57,7 +57,7 @@ class RegisterFragment  : Fragment (){
     }
 
 
-    //Métodos del frament
+    //FIREBASE
         //Método para registrar a un usuario
         private fun makeRegisterUser(){
 
@@ -79,7 +79,7 @@ class RegisterFragment  : Fragment (){
 
                         //Mensaje de confirmación
                         val dialogo: RegisterDialog = RegisterDialog().newInstance(name, email, password)
-                           dialogo.show(parentFragmentManager, null)
+                            dialogo.show(parentFragmentManager, null)
 
                     } else { //error
                        Helpers.showMessageDialog("Error", "Ha ocurrido un error inesperado al intentar crear el usuario.\nInténtalo de nuevo.", parentFragmentManager)

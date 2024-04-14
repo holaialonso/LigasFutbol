@@ -1,5 +1,6 @@
 package com.example.ligasfutbol.ui.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -17,6 +18,8 @@ import com.example.ligasfutbol.databinding.ActivitySecondBinding
 import com.example.ligasfutbol.databinding.HomeFragmentBinding
 import com.example.ligasfutbol.ui.adapter.LeagueAdapter
 import com.example.ligasfutbol.ui.adapter.TeamsAdapter
+import com.example.ligasfutbol.ui.dialog.ConfirmDialog
+import com.example.ligasfutbol.ui.dialog.RegisterDialog
 import com.example.ligasfutbol.ui.fragments.HomeFragment
 import com.example.ligasfutbol.ui.fragments.TeamsFragment
 import com.example.ligasfutbol.ui.model.League
@@ -29,7 +32,7 @@ import com.google.firebase.database.ValueEventListener
 
 
 
-class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListener, TeamsAdapter.onRecyclerTeamsListener{
+class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListener, TeamsAdapter.onRecyclerTeamsListener, ConfirmDialog.onConfirmDialogListener{
 
     // private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivitySecondBinding
@@ -56,92 +59,99 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
             setTitleMenu(idUser)
         }
 
-
-
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_second, menu)
 
-        //Opciones del menú -> tienen un actionLayout cada uno
+    //MENÚ
+        @SuppressLint("SuspiciousIndentation")
+        override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+            menuInflater.inflate(R.menu.menu_second, menu)
 
-            //Home
-            menu?.findItem(R.id.menu_home)?.actionView?.setOnClickListener{
-                //Si estoy en otro fragment -> vuelvo del otro fragment a la home
-                if(!getCurrentTypeFragment(R.id.homeFragment)){
-                    getCurrentFragment()?.findNavController()?.navigate(R.id.action_teamsFragment_to_homeFragment, null)
+            //Opciones del menú -> tienen un actionLayout cada uno
+
+                //Home
+                menu?.findItem(R.id.menu_home)?.actionView?.setOnClickListener{
+                    //Si estoy en otro fragment -> vuelvo del otro fragment a la home
+                    if(!getCurrentTypeFragment(R.id.homeFragment)){
+                        getCurrentFragment()?.findNavController()?.navigate(R.id.action_teamsFragment_to_homeFragment, null)
+                    }
                 }
-            }
 
-            //Favoritos
-            menu?.findItem(R.id.menu_favorites)?.actionView?.setOnClickListener{
+                //Favoritos
+                menu?.findItem(R.id.menu_favorites)?.actionView?.setOnClickListener{
 
-                var bundle = Bundle()
-                bundle.putString("idUser", idUser)
-                bundle.putBoolean("isFavorite", true)
+                    var bundle = Bundle()
+                    bundle.putString("idUser", idUser)
+                    bundle.putBoolean("isFavorite", true)
 
-                //Si estoy en otro fragment diferente
-                if(!getCurrentTypeFragment(R.id.teamsFragment)){
-                    getCurrentFragment()?.findNavController()?.navigate(R.id.action_homeFragment_to_teamsFragment, bundle)
+                    //Si estoy en otro fragment diferente
+                    if(!getCurrentTypeFragment(R.id.teamsFragment)){
+                        getCurrentFragment()?.findNavController()?.navigate(R.id.action_homeFragment_to_teamsFragment, bundle)
+                    }
+                    else{//Si estoy en la misma
+                        getCurrentFragment()?.findNavController()?.navigate(R.id.action_teamsFragment_self, bundle)
+                    }
                 }
-                else{//Si estoy en la misma
-                    getCurrentFragment()?.findNavController()?.navigate(R.id.action_teamsFragment_self, bundle)
+
+
+                //Cerrar sesión
+                menu?.findItem(R.id.menu_exit_session)?.actionView?.setOnClickListener{
+
+                    var dialogo: ConfirmDialog = ConfirmDialog().newInstance("Cerrar sesión", "¿Seguro que quieres cerrar la sesión de tu usuario?", "logout")
+                        dialogo.show(supportFragmentManager, null)
                 }
-            }
 
 
-            //Cerrar sesión
-            menu?.findItem(R.id.menu_exit_session)?.actionView?.setOnClickListener{
-                val intent : Intent = Intent (this, MainActivity::class.java)
-                startActivity(intent)
-            }
+                //Salir de la aplicación
+                menu?.findItem(R.id.menu_exit_app)?.actionView?.setOnClickListener{
+
+                    var dialogo: ConfirmDialog = ConfirmDialog().newInstance("Salir de la aplicación", "¿Seguro que quieres salir de la aplicación?", "exit")
+                    dialogo.show(supportFragmentManager, null)
+
+                }
 
 
-            //Salir de la aplicación
-            menu?.findItem(R.id.menu_exit_app)?.actionView?.setOnClickListener{
-                finishAffinity()
-            }
+            //fin opciones
 
+            return true
+        }
 
-        //fin opciones
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        //Los elementos del menú tienen un action layout por encima, no escuchan la pulsación aquí. La escuchan en el onCreateOptionsMenu.
-        return true
-    }
+            //Los elementos del menú tienen un action layout por encima, no escuchan la pulsación aquí. La escuchan en el onCreateOptionsMenu.
+            return true
+        }
 
 
 
-    //Método para obtener el nombre del usuario
-    private fun setTitleMenu(idUser : String){
+    //FIREBASE
+        //Método para obtener el nombre del usuario
+        private fun setTitleMenu(idUser : String){
 
-        var aux : String = ""
-        val referencia = database.getReference("users").child(idUser).
-        addListenerForSingleValueEvent(object : ValueEventListener {
-            //Cuando un dato ha cambiado: me devuelve la foto del nodo por el que estoy preguntado
-            override fun onDataChange(snapshot : DataSnapshot){
+            var aux : String = ""
+            val referencia = database.getReference("users").child(idUser).
+            addListenerForSingleValueEvent(object : ValueEventListener {
+                //Cuando un dato ha cambiado: me devuelve la foto del nodo por el que estoy preguntado
+                override fun onDataChange(snapshot : DataSnapshot){
 
-                aux= snapshot.child("name").value.toString()
-                aux = "¡Hola "+aux+"!"
-                aux = if (aux.length>15)  aux.replace("¡Hola", "¡Hola\n") else aux
+                    aux= snapshot.child("name").value.toString()
+                    aux = "¡Hola "+aux+"!"
+                    aux = if (aux.length>15)  aux.replace("¡Hola", "¡Hola\n") else aux
 
-                binding.toolbarTitle.setText(aux)
+                    binding.toolbarTitle.setText(aux)
 
-            }
+                }
 
-            override fun onCancelled(error : DatabaseError){
-                //Errores
-            }
-        })
+                override fun onCancelled(error : DatabaseError){
+                    //Errores
+                }
+            })
 
 
-    }
+        }
 
-    //Métodos de la interfaz
+
+    //INTERFAZ - TEAMS ADAPTER + LEAGUE ADAPTER + CONFIRM DIALOG
         //Método para ir de la home -> al fragment de equipos
         override fun onLeagueSelected(league: League) {
 
@@ -181,10 +191,25 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
 
         }
 
+        //Método de Confirm Dialog -> dependiendo del tipo de botón ejecutamos una acción  u otra
+        override fun onAcceptAction(type : String){
+
+            when (type) {
+                "logout" -> {
+                    val intent : Intent = Intent (this, MainActivity::class.java)
+                    startActivity(intent)
+                }
+                "exit" ->{
+                    finishAffinity()
+                }
+
+            }
+        }
 
 
-    //
 
+
+    //Métodos de la clase
         //Método para obtener el fragment que está actualmente cargado
         private fun getCurrentFragment() : Fragment? {
 
@@ -214,8 +239,6 @@ class SecondActivity : AppCompatActivity(), LeagueAdapter.onRecyclerLeagueListen
             return aux
 
         }
-
-
 
 
 }

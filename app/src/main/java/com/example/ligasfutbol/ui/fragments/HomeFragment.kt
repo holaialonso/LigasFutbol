@@ -57,7 +57,6 @@ class HomeFragment : Fragment() {
 
         super.onViewCreated(view, savedInstanceState)
 
-
     }
 
     //Método para despegar el fragment
@@ -66,42 +65,41 @@ class HomeFragment : Fragment() {
     }
 
 
-    //Método para consultar a la API las ligas
-    fun makeListLeagues(){
+    //API
+        //Método para consultar a la API las ligas
+        fun makeListLeagues(){
 
-        //Monto la petición
-        val request : JsonObjectRequest = JsonObjectRequest(
-            "https://www.thesportsdb.com/api/v1/json/3/all_leagues.php",
-            {
-                //RESPUESTA DE DATOS
-                //Lo que me devuelve la API
-                val result : JSONArray = it.getJSONArray("leagues")
+            //Monto la petición
+            val request : JsonObjectRequest = JsonObjectRequest(
+                "https://www.thesportsdb.com/api/v1/json/3/all_leagues.php",
+                {
+                    //RESPUESTA DE DATOS
+                    //Lo que me devuelve la API
+                    val result : JSONArray = it.getJSONArray("leagues")
 
-                //Recorro la información que tengo
-                for(i in 0 until result.length()){
+                    //Recorro la información que tengo
+                    for(i in 0 until result.length()){
 
-                    val element = result[i] as JSONObject
+                        val element = result[i] as JSONObject
 
-                    if(element.getString("strSport")=="Soccer") {
-                        val league: League = League(element.getString("strLeague"))
-                        LeagueAdapter.addElement(league)
+                        if(element.getString("strSport")=="Soccer") {
+                            val league: League = League(element.getString("strLeague"))
+                            LeagueAdapter.addElement(league)
+                        }
+
                     }
 
-                }
+                },
+                {
+                    //ERROR
+                    Snackbar.make(binding.root, "Error en la conexion", Snackbar.LENGTH_SHORT).show();
 
-            },
-            {
-                //ERROR
-                Snackbar.make(binding.root, "Error en la conexion", Snackbar.LENGTH_SHORT).show();
+                })
 
-            })
-
-        //Hago la petición
-        Volley.newRequestQueue(requireContext()).add(request)
-    }
+            //Hago la petición
+            Volley.newRequestQueue(requireContext()).add(request)
+        }
 
 
-    fun setNavigateHome(){
-        findNavController().navigate(R.id.action_teamsFragment_to_homeFragment)
-    }
+
 }

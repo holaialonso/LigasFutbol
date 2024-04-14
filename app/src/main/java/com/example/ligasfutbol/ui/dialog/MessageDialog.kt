@@ -1,5 +1,6 @@
 package com.example.ligasfutbol.ui.dialog
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
@@ -43,6 +44,7 @@ class MessageDialog : DialogFragment() {
     }
 
     //Método que me permite crear el cuadro de diálogo
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         //Constructor del cuadro de diálogo
