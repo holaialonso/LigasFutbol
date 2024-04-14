@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide
 import com.google.firebase.database.FirebaseDatabase
 
 
-class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto : Context, private val activity : String): RecyclerView.Adapter<TeamsAdapter.MyHolder>() {
+class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto : Context, private val activity : String, private val isFavorite : Boolean): RecyclerView.Adapter<TeamsAdapter.MyHolder>() {
 
     //Listener de la clase
     private lateinit var listener: TeamsAdapter.onRecyclerTeamsListener
@@ -95,7 +95,15 @@ class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto 
             //Botón para eliminar el favorito
                 holder.buttonNoFav?.setOnClickListener(){
                     listener.onTeamNoFavorite(team)
-                    removeElement(position)
+
+                    //Si el fragment que estoy mostrando son favoritos o no
+                    if(isFavorite) { //sin son favoritos -> lo elimino
+                        removeElement(position)
+                    }
+                    else{ //en caso contrario -> actualizo la posición
+                        team.favorite=false
+                        updateList(team, position)
+                    }
                 }
 
         }
@@ -131,6 +139,10 @@ class TeamsAdapter  (private var teams : ArrayList <Team>, private val contexto 
 
         }
 
+    fun getItem(i: Int): Team {
+
+        return teams.get(i)
+    }
 
 
     //COMUNICACIÓN ADAPTER -> ACTIVITY/FRAGMENT

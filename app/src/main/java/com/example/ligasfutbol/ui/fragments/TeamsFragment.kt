@@ -60,7 +60,7 @@ class TeamsFragment : Fragment (){
         binding = TeamsFragmentBinding.inflate(inflater, container, false)
 
         // Cargar los equipos
-        teamsAdapter = TeamsAdapter(ArrayList(), requireContext(), "main")
+        teamsAdapter = TeamsAdapter(ArrayList(), requireContext(), "main", isFavorite)
 
         if (!isFavorite){
             binding.root.findViewById<TextView>(R.id.labelTeams_Title).setText("Equipos")
@@ -100,24 +100,61 @@ class TeamsFragment : Fragment (){
         //Método para consultar a la API las ligas
         private fun makeListTeams(){
 
+            var aux : ArrayList<Team> = ArrayList()
+
             //Monto la petición
             val request : JsonObjectRequest = JsonObjectRequest(
                 "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l="+ URLEncoder.encode(nameLeague, "UTF-8"),
                 {
                     //RESPUESTA DE DATOS
-                    //Lo que me devuelve la API
-                    val result : JSONArray = it.getJSONArray("teams")
+                    //Lo que me devuelve la API - Todos los equipos
+                        val result : JSONArray = it.getJSONArray("teams")
 
-                    showNoResults(result.length())
+                        showNoResults(result.length())
 
-                    //Recorro la información que tengo
-                    for(i in 0 until result.length()){
-                        val element = result[i] as JSONObject
+                        //Recorro la información que tengo
+                        for(i in 0 until result.length()){
+                            val element = result[i] as JSONObject
 
-                        var team : Team = Team(element.getString("idTeam").toInt(), element.getString("strTeam"), element.getString("strStadiumThumb"), false)
-                        teamsAdapter.addElement(team)
+                            //Datos del equipo
+                            var idTeam : Int = element.getString("idTeam").toInt()
+                            var team : Team = Team(idTeam, element.getString("strTeam"), element.getString("strStadiumThumb"), false)
+                            teamsAdapter.addElement(team)
+                        }
 
-                    }
+                    //¿Qué equipos son los favoritos del usuario?
+                    val referencia = database.getReference("users").child(idUser).child("favorite")
+                    referencia.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+
+                            for(i in 0 until teamsAdapter.itemCount) {
+
+                                var team=teamsAdapter.getItem(i)
+
+                                snapshot.children.forEach { dataSnapshot ->
+
+                                   //Id del equipo
+                                    var id: Int =
+                                        dataSnapshot.child("id").getValue(Int::class.java)?.toInt()
+                                            ?: 0
+
+                                    if(id==team.id){
+                                        team.favorite=true
+                                    }
+
+                                    //Actualizar
+                                    teamsAdapter.updateList(team, i)
+
+                                }
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            // Manejo de errores en caso de cancelación
+                            println("Error de consulta en Firebase: ${error.message}")
+                        }
+                    })
+
                 },
                 {
                     //ERROR
@@ -159,10 +196,9 @@ class TeamsFragment : Fragment (){
                     println("Error de consulta en Firebase: ${error.message}")
                 }
             })
-
-
-
         }
+
+
 
 
     //Método para mostrar u ocultar el mensaje de "no hay resultados"
